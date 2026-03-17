@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Dashboard — LearnVault</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Student-specific styles ── */
+    .catalog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem;margin-top:1rem}
+    .catalog-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-md);padding:1.3rem;cursor:pointer;transition:transform .15s,box-shadow .15s}
+    .catalog-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.25)}
+    .catalog-card h3{font-size:1.05rem;margin:.5rem 0 .3rem}
+    .catalog-card p{font-size:.82rem;color:var(--text-sec);line-height:1.5}
+    .catalog-card .meta{display:flex;gap:.8rem;margin-top:.6rem;font-size:.75rem;color:var(--text-sec)}
+    .btn-enroll{background:var(--pri);color:#fff;border:none;padding:.5rem 1.2rem;border-radius:var(--r-sm);cursor:pointer;font-weight:600;margin-top:.8rem;width:100%;transition:background .15s}
+    .btn-enroll:hover{background:var(--pri-hover)}
+
+    .progress-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-md);padding:1.3rem;margin-bottom:1rem}
+    .progress-card h3{font-size:1rem;margin-bottom:.5rem}
+    .progress-bar-wrap{background:var(--border);border-radius:6px;height:8px;overflow:hidden;margin:.5rem 0}
+    .progress-bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--pri),#a78bfa);transition:width .3s}
+    .module-list{list-style:none;padding:0;margin:.8rem 0}
+    .module-list li{display:flex;align-items:center;gap:.6rem;padding:.55rem .7rem;border-radius:var(--r-sm);font-size:.88rem;cursor:pointer;transition:background .12s}
+    .module-list li:hover{background:rgba(109,90,205,.1)}
+    .module-list li .check{width:20px;height:20px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.7rem}
+    .module-list li.done .check{background:var(--pri);border-color:var(--pri);color:#fff}
+    .module-list li .icon{font-size:.9rem; flex-shrink:0}
+    .test-block{background:rgba(109,90,205,.08);border-radius:var(--r-sm);padding:1rem;margin-top:.8rem}
+    .test-block h4{margin:0 0 .4rem;font-size:.95rem}
+    .attempts-info{font-size:.78rem;color:var(--text-sec);margin-bottom:.5rem}
+
+    .cert-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-md);padding:1.2rem;display:flex;align-items:center;gap:1rem;margin-bottom:.8rem}
+    .cert-card .cert-icon{width:48px;height:48px;border-radius:var(--r-sm);background:linear-gradient(135deg,#6d5acd,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+    .cert-card .cert-info h3{font-size:.95rem;margin:0 0 .2rem}
+    .cert-card .cert-info p{font-size:.78rem;color:var(--text-sec);margin:0}
+    .btn-download{background:var(--pri);color:#fff;border:none;padding:.4rem 1rem;border-radius:var(--r-sm);cursor:pointer;font-size:.82rem;margin-left:auto;white-space:nowrap}
+
+    .ticket-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-md);padding:1rem;margin-bottom:.8rem}
+    .ticket-card .ticket-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
+    .ticket-card .ticket-head h4{margin:0;font-size:.92rem}
+    .ticket-reply{background:rgba(109,90,205,.08);border-radius:var(--r-sm);padding:.6rem .8rem;margin-top:.5rem;font-size:.85rem}
+
+    .profile-section{max-width:500px}
+    .profile-section .profile-stat{display:flex;gap:2rem;margin:1rem 0}
+    .profile-section .profile-stat div{text-align:center}
+    .profile-section .profile-stat div .num{font-size:1.5rem;font-weight:700;color:var(--pri)}
+    .profile-section .profile-stat div .label{font-size:.75rem;color:var(--text-sec)}
+    .btn-danger-outline{background:transparent;color:#ef4444;border:1px solid #ef4444;padding:.5rem 1.2rem;border-radius:var(--r-sm);cursor:pointer;font-weight:600;margin-top:1rem;transition:all .15s}
+    .btn-danger-outline:hover{background:#ef4444;color:#fff}
+
+    /* Player redesign */
+    .player-layout{display:grid;grid-template-columns:1fr 320px;gap:1rem}
+    @media(max-width:900px){.player-layout{grid-template-columns:1fr}}
+    .player-video-area{background:var(--card-bg);border-radius:var(--r-md);overflow:hidden}
+    .player-video-area video,.player-video-area iframe{width:100%;aspect-ratio:16/9;display:block;background:#000}
+    .text-reader{padding:1.5rem;max-height:500px;overflow-y:auto;font-size:.9rem;line-height:1.7;color:var(--text)}
+    .player-sidebar{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-md);padding:1rem;max-height:600px;overflow-y:auto}
+
+    /* Anti-cheat overlay */
+    .test-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:9999;display:flex;flex-direction:column;overflow-y:auto}
+    .test-header{display:flex;justify-content:space-between;align-items:center;padding:1rem 2rem;background:var(--card-bg);border-bottom:1px solid var(--border)}
+    .test-timer{font-size:1.3rem;font-weight:700;color:#ef4444;font-variant-numeric:tabular-nums}
+    .test-timer.warning{animation:blink .5s infinite}
+    @keyframes blink{50%{opacity:.3}}
+    .test-body{flex:1;padding:2rem;max-width:800px;margin:0 auto;width:100%}
+    .test-warnings{background:rgba(239,68,68,.1);border:1px solid #ef4444;border-radius:var(--r-sm);padding:.6rem 1rem;margin-bottom:1rem;font-size:.85rem;color:#ef4444}
+    .question-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--r-md);padding:1.2rem;margin-bottom:1rem}
+    .question-card h4{margin:0 0 .6rem;font-size:.95rem}
+    .question-card label{display:block;padding:.45rem .6rem;border-radius:var(--r-sm);cursor:pointer;font-size:.88rem;transition:background .1s}
+    .question-card label:hover{background:rgba(109,90,205,.1)}
+    .question-card input[type=radio]{margin-right:.5rem}
+    .question-card textarea{width:100%;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:var(--r-sm);padding:.5rem;min-height:80px;resize:vertical;font-family:inherit}
+
+    .hidden-view{display:none !important}
+
+    /* Modal */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:9000;animation:fadeUp .2s ease}
+    .modal-box{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:2rem;width:90%;max-width:520px;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+    .modal-box h2{font-size:1.2rem;font-weight:700;margin-bottom:1rem;color:var(--text)}
+    .modal-close{float:right;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text-sec)}
+    .modal-close:hover{color:var(--text)}
+    .form-field{margin-bottom:1rem}
+    .form-field label{display:block;font-size:.85rem;font-weight:600;margin-bottom:.35rem;color:var(--text)}
+    .form-field input,.form-field textarea,.form-field select{width:100%;padding:.55rem .75rem;border:1px solid var(--border);background:var(--bg);color:var(--text);border-radius:var(--r-sm);font-size:.88rem;font-family:inherit}
+    .form-field input:focus,.form-field textarea:focus{outline:none;border-color:var(--pri);box-shadow:0 0 0 3px rgba(109,90,205,.15)}
+    .btn-full{width:100%}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+  <div id="loader-overlay" class="loader-overlay hidden"><div class="loader-spinner"></div></div>
+
+  <div class="app-shell">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <svg class="sidebar-logo" viewBox="0 0 32 32" fill="none"><rect x="2" y="5" width="28" height="22" rx="3" stroke="currentColor" stroke-width="2"/><path d="M2 11h28" stroke="currentColor" stroke-width="2"/><path d="M11 20l4 4 6-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span>LearnVault</span>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-view="browse">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><line x1="10" y1="6" x2="10" y2="14"/><line x1="6" y1="10" x2="14" y2="10"/></svg>
+          <span>Browse Courses</span>
+        </button>
+        <button class="nav-item" data-view="progress">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v10a3 3 0 00-3-3H2z"/><path d="M18 3h-6a4 4 0 00-4 4v10a3 3 0 013-3h7z"/></svg>
+          <span>In Progress</span>
+        </button>
+        <button class="nav-item" data-view="certificates">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="14" height="14" rx="2"/><path d="M7 8h6"/><path d="M7 11h4"/></svg>
+          <span>Certificates</span>
+        </button>
+        <button class="nav-item" data-view="tokens">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h14v10H7l-4 4z"/></svg>
+          <span>Tokens</span>
+        </button>
+        <button class="nav-item" data-view="profile">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="3"/><path d="M3 17a7 7 0 0114 0"/></svg>
+          <span>Profile</span>
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <button id="logout-btn" class="nav-item nav-item-logout">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>Sign Out</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="main-content">
+      <!-- Top bar -->
+      <header class="topbar">
+        <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+          <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="19" y2="6"/><line x1="3" y1="11" x2="19" y2="11"/><line x1="3" y1="16" x2="19" y2="16"/></svg>
+        </button>
+        <div class="topbar-spacer"></div>
+        <div class="topbar-user">
+          <div class="avatar" id="user-avatar">S</div>
+          <span class="topbar-username" id="topbar-username">Student</span>
+        </div>
+      </header>
+
+      <!-- ═══ Browse Courses ═══ -->
+      <main class="view active" id="view-browse">
+        <div class="page-header">
+          <h1 class="page-title">Browse Courses</h1>
+          <p class="page-desc">Explore all available courses and enroll to start learning.</p>
+        </div>
+        <div id="catalog-grid" class="catalog-grid"></div>
+        <p class="empty-state hidden" id="catalog-empty">No courses available yet. Check back later!</p>
+      </main>
+
+      <!-- ═══ In Progress ═══ -->
+      <main class="view" id="view-progress">
+        <div class="page-header">
+          <h1 class="page-title">Courses In Progress</h1>
+          <p class="page-desc">Continue learning from your enrolled courses.</p>
+        </div>
+        <div id="progress-list"></div>
+        <p class="empty-state hidden" id="progress-empty">You haven't enrolled in any courses yet. Browse and enroll!</p>
+
+        <!-- Player sub-view (hidden by default) -->
+        <div id="player-view" class="hidden-view">
+          <button id="back-to-progress" class="btn btn-back">&larr; Back to courses</button>
+          <h2 id="player-course-title" style="margin:.5rem 0 1rem"></h2>
+          <div class="player-layout">
+            <div class="player-video-area" id="player-area">
+              <div id="video-placeholder" style="display:flex;align-items:center;justify-content:center;aspect-ratio:16/9;color:var(--text-sec);font-size:.9rem">Select a module to start</div>
+            </div>
+            <div class="player-sidebar">
+              <h3 style="margin:0 0 .8rem;font-size:.95rem">Modules</h3>
+              <ul id="module-list" class="module-list"></ul>
+              <div id="test-section" class="test-block" style="display:none">
+                <h4 id="test-title">Test</h4>
+                <p class="attempts-info" id="test-attempts"></p>
+                <button class="btn btn-primary" id="btn-start-test" style="width:100%">Start Test</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <!-- ═══ Certificates ═══ -->
+      <main class="view" id="view-certificates">
+        <div class="page-header">
+          <h1 class="page-title">My Certificates</h1>
+          <p class="page-desc">Download your course completion certificates.</p>
+        </div>
+        <div id="certs-list"></div>
+        <p class="empty-state hidden" id="certs-empty">No certificates yet. Complete a course test to earn one!</p>
+      </main>
+
+      <!-- ═══ Tokens ═══ -->
+      <main class="view" id="view-tokens">
+        <div class="page-header">
+          <h1 class="page-title">Support Tickets</h1>
+          <p class="page-desc">Raise a query and track your tickets.</p>
+        </div>
+        <button class="btn btn-primary" id="btn-new-ticket" style="margin-bottom:1rem">+ New Ticket</button>
+        <div id="tickets-list"></div>
+        <p class="empty-state hidden" id="tickets-empty">No tickets yet.</p>
+      </main>
+
+      <!-- ═══ Profile ═══ -->
+      <main class="view" id="view-profile">
+        <div class="page-header">
+          <h1 class="page-title">My Profile</h1>
+          <p class="page-desc">Manage your account settings.</p>
+        </div>
+        <div class="profile-section" id="profile-content"></div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Test overlay (injected by JS) -->
+  <div id="test-overlay-root"></div>
+
+  <div id="toast-container" class="toast-container"></div>
+  <div id="modal-root"></div>
+
+  <script src="../assets/js/student.js?v=4"></script>
+</body>
+</html>

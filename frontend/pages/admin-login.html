@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Sign In — LearnVault</title>
+  <link rel="stylesheet" href="../assets/css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div id="loader-overlay" class="loader-overlay hidden"><div class="loader-spinner"></div></div>
+
+  <section class="login-screen">
+    <div class="login-wrapper">
+      <div class="login-hero login-hero-admin">
+        <div class="login-hero-overlay"></div>
+        <div class="login-hero-content">
+          <h2>Administration Portal</h2>
+          <p>Manage courses, monitor student performance, and keep your platform running smoothly.</p>
+        </div>
+      </div>
+      <div class="login-form-panel">
+        <div class="login-card" id="signin-card">
+          <a href="../index.html" class="back-link">&larr; Back to home</a>
+          <h1 class="login-title">Admin Sign In</h1>
+          <p class="login-subtitle">Access the administration dashboard</p>
+          <form id="login-form" autocomplete="off">
+            <div class="form-field">
+              <label for="login-email">Email address</label>
+              <input type="email" id="login-email" placeholder="pro@learningvault.com" required />
+            </div>
+            <div class="form-field">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" placeholder="Enter your password" required />
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+            <p id="login-error" class="form-error hidden"></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="toast-container" class="toast-container"></div>
+  <script src="../assets/js/auth.js"></script>
+  <script>
+    initAuth({ role: 'admin', requiredRole: 'admin', dashboardUrl: 'admin-dashboard.html' });
+  </script>
+</body>
+</html>
